@@ -18,6 +18,7 @@ public class MenuButton extends Button {
 		
 	}
 	
+	//loads the correct button stats based on what button it is
 	@Override
 	protected void loadButton(Resources res) {
 		if (which_menu_button == MB_SELECT_LEVEL) {

@@ -39,7 +39,7 @@ public class Panel extends SurfaceView implements SurfaceHolder.Callback, Consta
             } 
             //Drag
             else if (event.getAction() == MotionEvent.ACTION_MOVE) {
-
+            	game.screenDragged(event);
             }
             //Screen released
             else if (event.getAction() == MotionEvent.ACTION_UP) {

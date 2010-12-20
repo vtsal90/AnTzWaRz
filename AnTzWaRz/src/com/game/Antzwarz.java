@@ -11,6 +11,8 @@ public class Antzwarz extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
+        //TODO: Make a progress bar/a default load screen
+        //TODO: Fix the initial black screen issue
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, 
                 WindowManager.LayoutParams.FLAG_FULLSCREEN); 
         

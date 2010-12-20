@@ -10,17 +10,18 @@ import android.util.Log;
 import android.view.MotionEvent;
 
 //The big head-honcho class.  Pretty much in charge of everything. 
+//And pretty much everything happens in this class
 public class Game implements Constants {
 	
-	
+	//General stuff that is needed
 	private Resources res;
 	private int game_state;
 	private int screen_width;
 	private int screen_height;
 	
 	//The background
-	//changes from the menu background to the game background
-	//when a game starts
+	//changes from the menu background to the
+	//game backgrounds when a game starts
 	private Bitmap background;
 	
 	//The menu buttons
@@ -31,12 +32,33 @@ public class Game implements Constants {
 	
 	//The select level buttons
 	private LevelButton[] lvl_buttons = new LevelButton[LEVEL_COUNT];
+	
+	//----------------------------------
+	//Everything need for the actual game play
+	//----------------------------------
+	private Level level;
+	private int which_view;
+	
+	//where the player is right now.  Determines what is drawn on screen
+	private Point current_cords;
+	//for moving the screen around
+	private Point last_pressed;
+	private Point screen_move;
+	
+	
+	//keeps track of the ant colony, tunnels, resources ect.
+	//the actual player
+	private Player player;
 
 	//Game is created on app startup!
 	public Game(Resources res, int screen_width, int screen_height) {
 		this.res = res;
 		this.screen_width = screen_width;
 		this.screen_height = screen_height;
+		
+		current_cords = new Point(0,0);
+		last_pressed = new Point(0,0);
+		screen_move = new Point(0,0);
 		
 		//The game is at the default menu when app starts
 		changeToMenuHome();
@@ -72,7 +94,17 @@ public class Game implements Constants {
 			screenPressedMenu(event);
 		}
 	}
+	
 
+	public void screenDragged(MotionEvent event) {
+		if (gameInGame()) {
+			//for moving around views
+			screenDraggedGame(event);
+		} else if (gameInMenu()) {
+			//for viewed more levels to select
+			screenDraggedMenu(event);
+		}
+	}
 
 	//-----------------------------------------
 	//Private methods below this point
@@ -86,26 +118,71 @@ public class Game implements Constants {
 	
 	private void updateGame() {
 		if (game_state == GS_GAME_PLAYING) {
-			
+			moveWorld();
+			dontOverExtendBoundries();
+
+
 		} else if (game_state == GS_GAME_PAUSED) {
 			
 		}
 	}
 
+	private void moveWorld() {
+		current_cords.x += screen_move.x;
+		current_cords.y += screen_move.y;
+		screen_move.x *= VIEW_MOVE_DEACCELERATION_RATE;
+		screen_move.y *= VIEW_MOVE_DEACCELERATION_RATE;
+		if (Math.abs(screen_move.x) < VIEW_MOVE_STOPPING_POINT) screen_move.x = 0;
+		if (Math.abs(screen_move.y) < VIEW_MOVE_STOPPING_POINT) screen_move.y = 0;
+	}
+
+	private void dontOverExtendBoundries() {
+		if (current_cords.x < 0) current_cords.x = 0;
+		if (current_cords.y < 0) current_cords.y = 0;
+		if (current_cords.x > background.getWidth()-screen_width) current_cords.x = background.getWidth()-screen_width;
+		if (current_cords.y > background.getHeight()-screen_height) current_cords.y = background.getHeight()-screen_height;
+	}
+
 	private void drawGame(Canvas canvas) {
-		// TODO Auto-generated method stub
+		canvas.drawBitmap(background,(float)-current_cords.x,(float)-current_cords.y,null);
+		player.tunnel.draw(canvas, current_cords);
+		//player.ant_colony.draw(canvas, current_cords);
 		
 	}
 	
 	//Screen was pressed while in game
 	private void screenPressedGame(MotionEvent event) {
-		// TODO Auto-generated method stub
+		if (game_state == GS_GAME_PLAYING) {
+			last_pressed.x = event.getX();
+			last_pressed.y = event.getY();
+		}
 		
 	}
 
-	private void loadAndStartLevel(int i) {
-		// TODO Auto-generated method stub
-		
+
+	private void screenDraggedGame(MotionEvent event) {
+		if (game_state == GS_GAME_PLAYING) {
+			screen_move.x = -(event.getX()-last_pressed.x);
+			screen_move.y = -(event.getY()-last_pressed.y);
+			last_pressed.x = event.getX();
+			last_pressed.y = event.getY();
+		}
+	}
+
+
+	private void loadAndStartLevel(int which_level) {
+		//TODO: Make a loading screen and once it is done loading remove the loading screen
+		game_state = GS_GAME_PLAYING;
+		level = new Level(res, which_level);
+		which_view = VIEW_UNDERGROUND;
+		background = level.whichImage(which_view);
+		player = new Player();
+		level.setPlayer(player);
+		//TODO: Loading screen now goes away
+	}
+	
+	private void changeView(int new_view) {
+		which_view = new_view;
 	}
 	
 	//Change the game to the main menu
@@ -210,9 +287,14 @@ public class Game implements Constants {
 				changeToMenuHome();
 			}
 		}
-		
 	}
+	
 
+	private void screenDraggedMenu(MotionEvent event) {
+		if (game_state == GS_MENU_SELECT_LEVEL) {
+			//TODO: scroll screen to view more levels
+		}
+	}
 
 	
 }

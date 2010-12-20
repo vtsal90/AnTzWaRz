@@ -21,6 +21,7 @@ public abstract class Button implements Constants {
 		canvas.drawBitmap(image,x,y,null);
 	}
 	
+	//was the button pressed
 	public boolean wasPressed(float x, float y) {
 		if (x >= this.x && x <= this.x + image.getWidth()) {
 			return (y >= this.y && y <= this.y + image.getHeight());
@@ -28,6 +29,7 @@ public abstract class Button implements Constants {
 		return false;
 	}
 	
+	//loads the correct button stats based on what button it is
 	protected abstract void loadButton(Resources res);
 
 }

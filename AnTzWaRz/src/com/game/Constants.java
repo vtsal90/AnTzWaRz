@@ -20,10 +20,22 @@ public interface Constants {
 	//Level count
 	public final int LEVEL_COUNT = 5;
 	
-	//Level buttons
-	public final int LVL_BUTTON_1 = 1;
-	public final int LVL_BUTTON_2 = 2;
-	public final int LVL_BUTTON_3 = 3;
-	public final int LVL_BUTTON_4 = 4;
-	public final int LVL_BUTTON_5 = 5;
+	//Levels
+	public final int LEVEL_1 = 1;
+	public final int LEVEL_2 = 2;
+	public final int LEVEL_3 = 3;
+	public final int LEVEL_4 = 4;
+	public final int LEVEL_5 = 5;
+	
+	//Views
+	public final int VIEW_UNDERGROUND = 1;
+	public final int VIEW_TOPSIDE = 1;
+	
+	//Move deacceleration rate
+	public final double VIEW_MOVE_DEACCELERATION_RATE = 0.9;
+	//stop moving when
+	public final double VIEW_MOVE_STOPPING_POINT = 0.1;
+	
+	//Tunnels: image size for edges/nodes
+	public final int TUNNEL_BLOCK_IMAGE_SIZE = 20;
 }

@@ -15,7 +15,7 @@ public class LevelButton extends Button {
 		this.level_locked = level_locked;
 		this.screen_width = screen_width;
 		this.screen_height = screen_height;
-
+		location = new Point();
 		loadButton(res);
 	}
 	
@@ -35,24 +35,24 @@ public class LevelButton extends Button {
 	protected void loadButton(Resources res) {
 		if (which_level_button == LEVEL_1) {
 			image = BitmapFactory.decodeResource(res,R.drawable.lvl_button_1);
-			x = screen_width*5/8 - image.getWidth()/2;
-			y = screen_height*1/10 - image.getHeight()/2;
+			location.x = screen_width*5/8 - image.getWidth()/2;
+			location.y = screen_height*1/10 - image.getHeight()/2;
 		} else if (which_level_button == LEVEL_2) {
 			image = BitmapFactory.decodeResource(res,R.drawable.lvl_button_2);
-			x = screen_width*5/8 - image.getWidth()/2;
-			y = screen_height*3/10 - image.getHeight()/2;
+			location.x = screen_width*5/8 - image.getWidth()/2;
+			location.y = screen_height*3/10 - image.getHeight()/2;
 		} else if (which_level_button == LEVEL_3) {
 			image = BitmapFactory.decodeResource(res,R.drawable.lvl_button_3);
-			x = screen_width*5/8 - image.getWidth()/2;
-			y = screen_height*5/10 - image.getHeight()/2;
+			location.x = screen_width*5/8 - image.getWidth()/2;
+			location.y = screen_height*5/10 - image.getHeight()/2;
 		} else if (which_level_button == LEVEL_4) {
 			image = BitmapFactory.decodeResource(res,R.drawable.lvl_button_4);
-			x = screen_width*5/8 - image.getWidth()/2;
-			y = screen_height*7/10 - image.getHeight()/2;
+			location.x = screen_width*5/8 - image.getWidth()/2;
+			location.y = screen_height*7/10 - image.getHeight()/2;
 		} else if (which_level_button == LEVEL_5) {
 			image = BitmapFactory.decodeResource(res,R.drawable.lvl_button_5);
-			x = screen_width*5/8 - image.getWidth()/2;
-			y = screen_height*9/10 - image.getHeight()/2;
+			location.x = screen_width*5/8 - image.getWidth()/2;
+			location.y = screen_height*9/10 - image.getHeight()/2;
 		}
 		
 		if (level_locked) {

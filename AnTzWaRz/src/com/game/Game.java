@@ -42,13 +42,15 @@ public class Game implements Constants {
 	//where the player is right now.  Determines what is drawn on screen
 	private Point current_cords;
 	//for moving the screen around
-	private Point last_pressed;
+	private Point where_pressed;
 	private Point screen_move;
 	
 	
 	//keeps track of the ant colony, tunnels, resources ect.
 	//the actual player
 	private Player player;
+	//the UI!  Displays helpful things
+	private Ui ui;
 
 	//Game is created on app startup!
 	public Game(Resources res, int screen_width, int screen_height) {
@@ -57,7 +59,7 @@ public class Game implements Constants {
 		this.screen_height = screen_height;
 		
 		current_cords = new Point(0,0);
-		last_pressed = new Point(0,0);
+		where_pressed = new Point(0,0);
 		screen_move = new Point(0,0);
 		
 		//The game is at the default menu when app starts
@@ -145,27 +147,51 @@ public class Game implements Constants {
 
 	private void drawGame(Canvas canvas) {
 		canvas.drawBitmap(background,(float)-current_cords.x,(float)-current_cords.y,null);
-		player.tunnel.draw(canvas, current_cords);
+		if (which_view == VIEW_UNDERGROUND) {
+			player.tunnel.draw(canvas, current_cords);
+		}
+			
 		//player.ant_colony.draw(canvas, current_cords);
 		
+		
+		ui.draw(canvas);
 	}
-	
 	//Screen was pressed while in game
 	private void screenPressedGame(MotionEvent event) {
 		if (game_state == GS_GAME_PLAYING) {
-			last_pressed.x = event.getX();
-			last_pressed.y = event.getY();
+			where_pressed.x = event.getX();
+			where_pressed.y = event.getY();
+			UiButton button;
+			if ((button = ui.wasPressed(event)) != null) {
+				uiWasPressed(button);
+			}
 		}
 		
 	}
 
+	private void uiWasPressed(UiButton button) {
+		if (button.whichButton() == UI_BUTTON_PAUSE) {
+			pauseGame();
+		} else if (button.whichButton() == UI_BUTTON_CHANGE_VIEW) {
+			int new_view = which_view == VIEW_UNDERGROUND ? VIEW_TOPSIDE : VIEW_UNDERGROUND;
+			changeView(new_view);
+			ui.changeChangeViewButton(new_view);
+		} else if (button.whichButton() == UI_BUTTON_NOTIFICATION) {
+			
+		}
+		
+	}
+
+	private void pauseGame() {
+		//TODO: 
+	}
 
 	private void screenDraggedGame(MotionEvent event) {
 		if (game_state == GS_GAME_PLAYING) {
-			screen_move.x = -(event.getX()-last_pressed.x);
-			screen_move.y = -(event.getY()-last_pressed.y);
-			last_pressed.x = event.getX();
-			last_pressed.y = event.getY();
+			screen_move.x = -(event.getX()-where_pressed.x);
+			screen_move.y = -(event.getY()-where_pressed.y);
+			where_pressed.x = event.getX();
+			where_pressed.y = event.getY();
 		}
 	}
 
@@ -178,11 +204,14 @@ public class Game implements Constants {
 		background = level.whichImage(which_view);
 		player = new Player();
 		level.setPlayer(player);
+		ui = new Ui(res, screen_width, screen_height, player);
 		//TODO: Loading screen now goes away
 	}
 	
+	//change the view from underground to topside
 	private void changeView(int new_view) {
 		which_view = new_view;
+		background = level.whichImage(which_view);
 	}
 	
 	//Change the game to the main menu

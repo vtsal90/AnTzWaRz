@@ -13,18 +13,17 @@ public abstract class Button implements Constants {
 	protected Bitmap image;
 	
 	//where the button is located
-	protected float x;
-	protected float y;
+	protected Point location;
 
 
 	public void draw(Canvas canvas) {
-		canvas.drawBitmap(image,x,y,null);
+		canvas.drawBitmap(image,(float)location.x,(float)location.y,null);
 	}
 	
 	//was the button pressed
 	public boolean wasPressed(float x, float y) {
-		if (x >= this.x && x <= this.x + image.getWidth()) {
-			return (y >= this.y && y <= this.y + image.getHeight());
+		if (x >= this.location.x && x <= this.location.x + image.getWidth()) {
+			return (y >= this.location.y && y <= this.location.y + image.getHeight());
 		}
 		return false;
 	}

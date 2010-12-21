@@ -17,6 +17,11 @@ public interface Constants {
 	public final int MB_OPTIONS = 3;
 	public final int MB_BACK = 4;
 	
+	//UI Buttons
+	public final int UI_BUTTON_PAUSE = 1;
+	public final int UI_BUTTON_CHANGE_VIEW = 2;
+	public final int UI_BUTTON_NOTIFICATION = 3;
+	
 	//Level count
 	public final int LEVEL_COUNT = 5;
 	
@@ -29,7 +34,7 @@ public interface Constants {
 	
 	//Views
 	public final int VIEW_UNDERGROUND = 1;
-	public final int VIEW_TOPSIDE = 1;
+	public final int VIEW_TOPSIDE = 2;
 	
 	//Move deacceleration rate
 	public final double VIEW_MOVE_DEACCELERATION_RATE = 0.9;
@@ -38,4 +43,11 @@ public interface Constants {
 	
 	//Tunnels: image size for edges/nodes
 	public final int TUNNEL_BLOCK_IMAGE_SIZE = 20;
+	
+	//Ants!
+	public final int ANT_QUEEN = 1;
+	public final int ANT_LARVA = 2;
+	public final int ANT_WORKER = 3;
+	public final int ANT_WARRIOR = 4;
+	public final int ANT_SCIENTIST = 5;
 }

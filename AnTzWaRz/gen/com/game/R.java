@@ -31,11 +31,15 @@ public final class R {
         public static final int mb_options=0x7f020011;
         public static final int mb_select_level=0x7f020012;
         public static final int mineral=0x7f020013;
-        public static final int ui_button_pause=0x7f020014;
-        public static final int ui_button_topside=0x7f020015;
-        public static final int ui_button_underground=0x7f020016;
-        public static final int ui_top_background=0x7f020017;
-        public static final int world=0x7f020018;
+        public static final int pause_background=0x7f020014;
+        public static final int pause_quit=0x7f020015;
+        public static final int pause_resume=0x7f020016;
+        public static final int pause_save_quit=0x7f020017;
+        public static final int ui_button_pause=0x7f020018;
+        public static final int ui_button_topside=0x7f020019;
+        public static final int ui_button_underground=0x7f02001a;
+        public static final int ui_top_background=0x7f02001b;
+        public static final int world=0x7f02001c;
     }
     public static final class layout {
         public static final int main=0x7f030000;

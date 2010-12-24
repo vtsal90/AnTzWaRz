@@ -11,14 +11,14 @@ public class Ui implements Constants {
 	private Bitmap top_background;
 	private Point top_bg_location;
 	
-	private UiButton pause_button;
+	private UiPauseButton pause_button;
 	private UiChangeViewButton change_view_button;
 	private UiButton notificiation_button;
 
 	public Ui(Resources res, int screen_width, int screen_height, Player player) {
 		top_background = BitmapFactory.decodeResource(res, R.drawable.ui_top_background);
 		top_bg_location = new Point(screen_width-top_background.getWidth(), screen_height/2-top_background.getHeight()/2);
-		pause_button = new UiButton(res, UI_BUTTON_PAUSE, screen_width, screen_height);
+		pause_button = new UiPauseButton(res, UI_BUTTON_PAUSE, screen_width, screen_height);
 		change_view_button = new UiChangeViewButton(res, UI_BUTTON_CHANGE_VIEW, screen_width, screen_height);
 	}
 
@@ -41,9 +41,20 @@ public class Ui implements Constants {
 
 	public void draw(Canvas canvas) {
 		canvas.drawBitmap(top_background, (float)top_bg_location.x, (float)top_bg_location.y, null);
-		pause_button.draw(canvas);
 		change_view_button.draw(canvas);
-		//pause_button.draw(canvas);
+		
+		//This has to be the last thing drawn
+		pause_button.draw(canvas);
+	}
+
+
+	public MenuButton pauseMenuButtonWasPressed(MotionEvent event) {
+		return pause_button.wasMenuButtonPressed(event);
+	}
+
+
+	public void setPausedButton(boolean game_paused) {
+		pause_button.setIfGamePaused(game_paused);
 	}
 
 }

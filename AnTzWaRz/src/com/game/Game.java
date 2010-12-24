@@ -22,6 +22,7 @@ public class Game implements Constants {
 	//The background
 	//changes from the menu background to the
 	//game backgrounds when a game starts
+	private Bitmap menu_background;
 	private Bitmap background;
 	
 	//The menu buttons
@@ -124,6 +125,7 @@ public class Game implements Constants {
 			dontOverExtendBoundries();
 
 
+		//when game is paused nothing happens
 		} else if (game_state == GS_GAME_PAUSED) {
 			
 		}
@@ -138,6 +140,7 @@ public class Game implements Constants {
 		if (Math.abs(screen_move.y) < VIEW_MOVE_STOPPING_POINT) screen_move.y = 0;
 	}
 
+	//fix the screen so what is displayed exists
 	private void dontOverExtendBoundries() {
 		if (current_cords.x < 0) current_cords.x = 0;
 		if (current_cords.y < 0) current_cords.y = 0;
@@ -145,17 +148,19 @@ public class Game implements Constants {
 		if (current_cords.y > background.getHeight()-screen_height) current_cords.y = background.getHeight()-screen_height;
 	}
 
+	//this has to be in layers, things underneath drawn first
+	//things on top drawn last
 	private void drawGame(Canvas canvas) {
 		canvas.drawBitmap(background,(float)-current_cords.x,(float)-current_cords.y,null);
 		if (which_view == VIEW_UNDERGROUND) {
 			player.tunnel.draw(canvas, current_cords);
-		}
-			
+		}		
 		//player.ant_colony.draw(canvas, current_cords);
-		
+
 		
 		ui.draw(canvas);
 	}
+	
 	//Screen was pressed while in game
 	private void screenPressedGame(MotionEvent event) {
 		if (game_state == GS_GAME_PLAYING) {
@@ -164,6 +169,11 @@ public class Game implements Constants {
 			UiButton button;
 			if ((button = ui.wasPressed(event)) != null) {
 				uiWasPressed(button);
+			}
+		} else if (game_state == GS_GAME_PAUSED) {
+			MenuButton button;
+			if ((button = ui.pauseMenuButtonWasPressed(event)) != null) {
+				uiPausedMenuButtonPressed(button);
 			}
 		}
 		
@@ -179,13 +189,45 @@ public class Game implements Constants {
 		} else if (button.whichButton() == UI_BUTTON_NOTIFICATION) {
 			
 		}
+	}
+
+	private void uiPausedMenuButtonPressed(MenuButton button) {
+		if (button.whichMenuButton() == PAUSE_RESUME) {
+			resumeGame();
+		} else if (button.whichMenuButton() == PAUSE_SAVE_QUIT) {
+			saveGame();
+			exitGame();
+			changeToMenuHome();
+		} else if (button.whichMenuButton() == PAUSE_QUIT) {
+			exitGame();
+			changeToMenuHome();
+		}
 		
 	}
 
-	private void pauseGame() {
-		//TODO: 
+	private void saveGame() {
+		//TODO:
 	}
 
+	private void exitGame() {
+		level = null;
+		player = null;
+		ui = null;
+		background = null;
+	}
+
+	
+	private void pauseGame() {
+		game_state = GS_GAME_PAUSED;
+		ui.setPausedButton(true);
+	}
+	
+	private void resumeGame() {
+		game_state = GS_GAME_PLAYING;
+		ui.setPausedButton(false);
+	}
+
+	//on a screen draw update what is currently being drawn
 	private void screenDraggedGame(MotionEvent event) {
 		if (game_state == GS_GAME_PLAYING) {
 			screen_move.x = -(event.getX()-where_pressed.x);
@@ -194,7 +236,6 @@ public class Game implements Constants {
 			where_pressed.y = event.getY();
 		}
 	}
-
 
 	private void loadAndStartLevel(int which_level) {
 		//TODO: Make a loading screen and once it is done loading remove the loading screen
@@ -218,7 +259,8 @@ public class Game implements Constants {
 	private void changeToMenuHome() {
 		//default background
 		game_state = GS_MENU_HOME;
-		background = BitmapFactory.decodeResource(res,R.drawable.background_default);
+		if (menu_background == null)
+			menu_background = BitmapFactory.decodeResource(res,R.drawable.background_default);
 		
 		if (select_level == null)
 			select_level = new MenuButton(res, MB_SELECT_LEVEL, screen_width, screen_height);
@@ -231,6 +273,8 @@ public class Game implements Constants {
 		
 		if (back == null)
 			back = new MenuButton(res, MB_BACK, screen_width, screen_height);
+		
+		background = menu_background;
 		
 	}
 	
@@ -245,14 +289,15 @@ public class Game implements Constants {
 		}
 	}
 	
+	//at the options page
 	private void changeToMenuOptions() {
 		game_state = GS_MENU_OPTIONS;
 	}
 
+	//when the continue button is pressed
 	private void loadSavedGame() {
 		//TODO: Load saved game
 	}
-
 	
 	//Is the game currently at a menu?
 	private boolean gameInMenu() {		
@@ -261,6 +306,7 @@ public class Game implements Constants {
 			game_state == GS_MENU_OPTIONS;
 	}
 	
+	//TODO: Is this needed?
 	private void updateMenu() {
 		if (game_state == GS_MENU_HOME) {
 			

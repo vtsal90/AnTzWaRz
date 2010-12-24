@@ -7,7 +7,6 @@ import android.graphics.BitmapFactory;
 public class MenuButton extends Button {
 
 	private int which_menu_button;
-
 	
 	public MenuButton(Resources res, int which_menu_button, int screen_width, int screen_height) {
 		this.which_menu_button = which_menu_button;
@@ -37,8 +36,23 @@ public class MenuButton extends Button {
 			image = BitmapFactory.decodeResource(res,R.drawable.mb_back);
 			location.x = screen_width*1/7 - image.getWidth()/2;
 			location.y = screen_height*7/8 - image.getHeight()/2;
+		} else if (which_menu_button == PAUSE_RESUME) {
+			image = BitmapFactory.decodeResource(res,R.drawable.pause_resume);
+			location.x = screen_width/2 - image.getWidth()/2;
+			location.y = screen_height*1/3 - image.getHeight()/2;
+		} else if (which_menu_button == PAUSE_SAVE_QUIT) {
+			image = BitmapFactory.decodeResource(res,R.drawable.pause_save_quit);
+			location.x = screen_width/2 - image.getWidth()/2;
+			location.y = screen_height*2/3 - image.getHeight()/2;		
+		} else if (which_menu_button == PAUSE_QUIT) {
+			image = BitmapFactory.decodeResource(res,R.drawable.pause_quit);
+			location.x = 10;
+			location.y = screen_height - image.getHeight() - 10;;	
 		}
 	}
 
+	public int whichMenuButton() {
+		return which_menu_button;
+	}
 
 }

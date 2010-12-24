@@ -16,6 +16,10 @@ public interface Constants {
 	public final int MB_CONTINUE = 2;
 	public final int MB_OPTIONS = 3;
 	public final int MB_BACK = 4;
+	public final int PAUSE_RESUME = 5;
+	public final int PAUSE_SAVE_QUIT = 6;
+	public final int PAUSE_QUIT = 7;
+
 	
 	//UI Buttons
 	public final int UI_BUTTON_PAUSE = 1;

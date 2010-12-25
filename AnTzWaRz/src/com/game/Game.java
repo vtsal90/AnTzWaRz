@@ -19,11 +19,10 @@ public class Game implements Constants {
 	private int screen_width;
 	private int screen_height;
 	
-	//The background
-	//changes from the menu background to the
-	//game backgrounds when a game starts
-	private Bitmap menu_background;
-	private Bitmap background;
+	//Keeps track 
+	private View menu_view;
+	private View topside_view;
+	private View underground_view;
 	
 	//The menu buttons
 	private MenuButton select_level = null;
@@ -38,10 +37,8 @@ public class Game implements Constants {
 	//Everything need for the actual game play
 	//----------------------------------
 	private Level level;
-	private int which_view;
+	private View current_view;
 	
-	//where the player is right now.  Determines what is drawn on screen
-	private Point current_cords;
 	//for moving the screen around
 	private Point where_pressed;
 	private Point screen_move;
@@ -59,9 +56,16 @@ public class Game implements Constants {
 		this.screen_width = screen_width;
 		this.screen_height = screen_height;
 		
-		current_cords = new Point(0,0);
 		where_pressed = new Point(0,0);
 		screen_move = new Point(0,0);
+		
+		menu_view = new View(VIEW_MENU);
+		menu_view.setBackground(BitmapFactory.decodeResource(res, R.drawable.background_default));
+		
+		select_level = new MenuButton(res, MB_SELECT_LEVEL, screen_width, screen_height);
+		game_continue = new MenuButton(res, MB_CONTINUE, screen_width, screen_height);
+		options = new MenuButton(res, MB_OPTIONS, screen_width, screen_height);
+		back = new MenuButton(res, MB_BACK, screen_width, screen_height);
 		
 		//The game is at the default menu when app starts
 		changeToMenuHome();
@@ -121,8 +125,9 @@ public class Game implements Constants {
 	
 	private void updateGame() {
 		if (game_state == GS_GAME_PLAYING) {
+			current_view.updateCurrentCords(screen_move);
 			moveWorld();
-			dontOverExtendBoundries();
+			current_view.dontOverExtendBoundries(screen_width, screen_height);
 
 
 		//when game is paused nothing happens
@@ -132,28 +137,18 @@ public class Game implements Constants {
 	}
 
 	private void moveWorld() {
-		current_cords.x += screen_move.x;
-		current_cords.y += screen_move.y;
 		screen_move.x *= VIEW_MOVE_DEACCELERATION_RATE;
 		screen_move.y *= VIEW_MOVE_DEACCELERATION_RATE;
 		if (Math.abs(screen_move.x) < VIEW_MOVE_STOPPING_POINT) screen_move.x = 0;
 		if (Math.abs(screen_move.y) < VIEW_MOVE_STOPPING_POINT) screen_move.y = 0;
 	}
 
-	//fix the screen so what is displayed exists
-	private void dontOverExtendBoundries() {
-		if (current_cords.x < 0) current_cords.x = 0;
-		if (current_cords.y < 0) current_cords.y = 0;
-		if (current_cords.x > background.getWidth()-screen_width) current_cords.x = background.getWidth()-screen_width;
-		if (current_cords.y > background.getHeight()-screen_height) current_cords.y = background.getHeight()-screen_height;
-	}
-
 	//this has to be in layers, things underneath drawn first
 	//things on top drawn last
 	private void drawGame(Canvas canvas) {
-		canvas.drawBitmap(background,(float)-current_cords.x,(float)-current_cords.y,null);
-		if (which_view == VIEW_UNDERGROUND) {
-			player.tunnel.draw(canvas, current_cords);
+		current_view.draw(canvas);
+		if (current_view.whichView() == VIEW_UNDERGROUND) {
+			player.tunnel.draw(canvas, current_view.getCurrentCords());
 		}		
 		//player.ant_colony.draw(canvas, current_cords);
 
@@ -183,7 +178,7 @@ public class Game implements Constants {
 		if (button.whichButton() == UI_BUTTON_PAUSE) {
 			pauseGame();
 		} else if (button.whichButton() == UI_BUTTON_CHANGE_VIEW) {
-			int new_view = which_view == VIEW_UNDERGROUND ? VIEW_TOPSIDE : VIEW_UNDERGROUND;
+			int new_view = current_view.whichView() == VIEW_UNDERGROUND ? VIEW_TOPSIDE : VIEW_UNDERGROUND;
 			changeView(new_view);
 			ui.changeChangeViewButton(new_view);
 		} else if (button.whichButton() == UI_BUTTON_NOTIFICATION) {
@@ -213,7 +208,8 @@ public class Game implements Constants {
 		level = null;
 		player = null;
 		ui = null;
-		background = null;
+		underground_view = null;
+		topside_view = null;
 	}
 
 	
@@ -241,8 +237,11 @@ public class Game implements Constants {
 		//TODO: Make a loading screen and once it is done loading remove the loading screen
 		game_state = GS_GAME_PLAYING;
 		level = new Level(res, which_level);
-		which_view = VIEW_UNDERGROUND;
-		background = level.whichImage(which_view);
+		topside_view = new View(VIEW_TOPSIDE);
+		underground_view = new View(VIEW_UNDERGROUND);
+		underground_view.setBackground(level.whichImage(VIEW_UNDERGROUND));
+		topside_view.setBackground(level.whichImage(VIEW_TOPSIDE));
+		current_view = underground_view;
 		player = new Player();
 		level.setPlayer(player);
 		ui = new Ui(res, screen_width, screen_height, player);
@@ -251,31 +250,19 @@ public class Game implements Constants {
 	
 	//change the view from underground to topside
 	private void changeView(int new_view) {
-		which_view = new_view;
-		background = level.whichImage(which_view);
+		screen_move.x = 0;
+		screen_move.y = 0;
+		if (new_view == VIEW_UNDERGROUND) {
+			current_view = underground_view;
+		} else if (new_view == VIEW_TOPSIDE) {
+			current_view = topside_view;
+		}
 	}
 	
 	//Change the game to the main menu
 	private void changeToMenuHome() {
-		//default background
 		game_state = GS_MENU_HOME;
-		if (menu_background == null)
-			menu_background = BitmapFactory.decodeResource(res,R.drawable.background_default);
-		
-		if (select_level == null)
-			select_level = new MenuButton(res, MB_SELECT_LEVEL, screen_width, screen_height);
-		
-		if (game_continue == null)
-			game_continue = new MenuButton(res, MB_CONTINUE, screen_width, screen_height);
-		
-		if (options == null)
-			options = new MenuButton(res, MB_OPTIONS, screen_width, screen_height);
-		
-		if (back == null)
-			back = new MenuButton(res, MB_BACK, screen_width, screen_height);
-		
-		background = menu_background;
-		
+		current_view = menu_view;
 	}
 	
 	//By default only the first level is unlocked
@@ -319,7 +306,7 @@ public class Game implements Constants {
 	
 	//Draw everything assioated with the menu
 	private void drawMenu(Canvas canvas) {
-		canvas.drawBitmap(background,0,0,null);
+		current_view.draw(canvas);
 		if (game_state == GS_MENU_HOME) {
 			select_level.draw(canvas);
 			game_continue.draw(canvas);

@@ -37,8 +37,9 @@ public interface Constants {
 	public final int LEVEL_5 = 5;
 	
 	//Views
-	public final int VIEW_UNDERGROUND = 1;
-	public final int VIEW_TOPSIDE = 2;
+	public final int VIEW_MENU = 1;
+	public final int VIEW_UNDERGROUND = 2;
+	public final int VIEW_TOPSIDE = 3;
 	
 	//Move deacceleration rate
 	public final double VIEW_MOVE_DEACCELERATION_RATE = 0.9;

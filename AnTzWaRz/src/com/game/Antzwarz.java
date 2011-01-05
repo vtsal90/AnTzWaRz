@@ -6,6 +6,10 @@ import android.view.Display;
 import android.view.WindowManager;
 
 public class Antzwarz extends Activity {
+
+	//I want to see if this goes into commit. - Vatsal 
+	//second time. 
+
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
